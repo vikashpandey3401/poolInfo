@@ -1,0 +1,44 @@
+<div class="glass-card p-6 animate-fade-in">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-white">Wallet Balance</h2>
+    <div class="p-2 bg-blue-500/20 rounded-lg">
+      <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+      </svg>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center py-10">
+    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+  </div>
+
+  <div *ngIf="!loading && !error" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+      <p class="text-sm text-gray-400 mb-1">Available Balance</p>
+      <p class="text-3xl font-mono text-white">${{ balance.available_balance | number:'1.2-8' }}</p>
+    </div>
+    <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+      <p class="text-sm text-gray-400 mb-1">Locked Balance</p>
+      <p class="text-3xl font-mono text-yellow-500">${{ balance.locked_balance | number:'1.2-8' }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !error" class="mt-8 pt-6 border-t border-white/10">
+    <h3 class="text-lg font-semibold text-white mb-4">Quick Deposit</h3>
+    <div class="flex gap-4">
+      <input type="number" [(ngModel)]="depositAmount"
+        class="flex-1 bg-slate-800 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
+        placeholder="Enter amount">
+      <button (click)="depositFunds()"
+        class="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold px-6 py-2 rounded-lg transition-all transform active:scale-95 text-sm">
+        Add Funds
+      </button>
+    </div>
+    <p *ngIf="depositMessage" class="mt-2 text-xs text-emerald-400">{{ depositMessage }}</p>
+  </div>
+
+  <div *ngIf="error" class="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-500">
+    {{ error }}
+  </div>
+</div>

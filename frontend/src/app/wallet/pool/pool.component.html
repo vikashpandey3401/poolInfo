@@ -1,0 +1,144 @@
+<div class="glass-card p-6 animate-fade-in mt-6">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-white">Copy Trading Pools</h2>
+            <p class="text-slate-400 text-sm mt-1">Follow professional traders and automate your trades</p>
+        </div>
+        <div class="flex flex-col items-end gap-2">
+            <div *ngIf="currentUser?.role === 'PARENT'"
+                class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg">
+                <span class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">Your Invite Code</span>
+                <span class="text-white font-mono font-bold">{{ currentUser?.invite_code }}</span>
+            </div>
+            <div class="p-3 bg-indigo-500/20 rounded-xl w-fit">
+                <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Subscription info -->
+    <div *ngIf="currentSub"
+        class="bg-indigo-500/10 border border-indigo-500/30 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 transform hover:scale-[1.01] transition-all">
+        <div class="flex items-center gap-5">
+            <div
+                class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-indigo-500/20">
+                {{ currentSub.parent_name?.[0]?.toUpperCase() || 'P' }}
+            </div>
+            <div>
+                <p class="text-indigo-400 text-xs font-bold uppercase tracking-wider">Currently Following</p>
+                <h3 class="text-2xl font-bold text-white">{{ currentSub.parent_name }}</h3>
+                <p class="text-slate-400 text-sm mt-1">Copying with <span class="text-white font-mono">${{
+                        currentSub.fixed_margin }}</span> per trade</p>
+            </div>
+        </div>
+        <button (click)="leavePool()"
+            class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-8 py-3 rounded-xl transition-all font-bold shadow-lg active:scale-95">
+            Stop Copying
+        </button>
+    </div>
+
+    <!-- Parent Management Section -->
+    <div *ngIf="currentUser?.role === 'PARENT'" class="mb-10 animate-fade-in">
+        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
+            Your Pool Management
+        </h3>
+
+        <div class="glass-panel p-6 border border-emerald-500/20 bg-emerald-500/5">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h4 class="text-lg font-bold text-white">Active Followers</h4>
+                    <p class="text-slate-400 text-sm">Users currently copying your trades</p>
+                </div>
+                <div
+                    class="text-2xl font-mono text-emerald-400 font-bold bg-slate-800 px-4 py-2 rounded-xl border border-white/5">
+                    {{ followers.length }}
+                </div>
+            </div>
+
+            <div *ngIf="followers.length === 0" class="text-center py-8 text-slate-500 italic">
+                No followers in your pool yet.
+            </div>
+
+            <div class="space-y-3">
+                <div *ngFor="let follower of followers"
+                    class="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">
+                            {{ follower.username[0].toUpperCase() }}
+                        </div>
+                        <span class="text-white font-medium">{{ follower.username }}</span>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Copy Size</p>
+                            <p class="text-emerald-400 font-mono text-sm">${{ follower.fixed_margin }}</p>
+                        </div>
+                        <div class="text-right hidden sm:block">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Joined</p>
+                            <p class="text-slate-400 text-xs">{{ follower.created_at | date:'shortDate' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Traders Section -->
+    <div class="space-y-6">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span>
+            Available Traders
+        </h3>
+
+        <div *ngIf="parents.length === 0" class="glass-panel p-10 text-center text-slate-500 italic">
+            No active parents available for copy trading right now.
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div *ngFor="let parent of parents"
+                class="glass-panel p-5 border border-white/5 hover:border-indigo-500/30 transition-all group">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-indigo-400 font-bold group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                            {{ parent.username[0].toUpperCase() }}
+                        </div>
+                        <span class="text-white font-bold">{{ parent.username }}</span>
+                    </div>
+                    <div class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold uppercase">
+                        Pro</div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-slate-500 font-bold uppercase">Your Trade Size ($)</label>
+                        <input type="number" [(ngModel)]="margin"
+                            class="w-full bg-slate-900/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-indigo-500/50 transition-colors"
+                            placeholder="3.00">
+                    </div>
+                    <button (click)="joinPool(parent.id)" [disabled]="currentSub?.parent_id === parent.id"
+                        class="w-full bg-indigo-500 hover:bg-indigo-600 disabled:opacity-30 text-white font-bold py-2.5 rounded-lg transition-all active:scale-95 shadow-lg shadow-indigo-500/20">
+                        {{ currentSub?.parent_id === parent.id ? 'Already Following' : 'Join Pool' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div *ngIf="message"
+        class="fixed bottom-8 right-8 bg-slate-900 border border-white/10 shadow-2xl rounded-2xl p-4 animate-slide-in flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <span class="text-white font-medium">{{ message }}</span>
+    </div>
+</div>

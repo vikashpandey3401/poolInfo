@@ -1,0 +1,89 @@
+<div class="glass-card p-6 animate-fade-in mt-6">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-white">Trade Operations</h2>
+        <div class="p-2 bg-emerald-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Open Trade Section -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-200">Open New Trade</h3>
+            <div class="space-y-2">
+                <label class="text-sm text-gray-400">Margin Amount ($)</label>
+                <input type="number" [(ngModel)]="margin"
+                    class="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500/50 transition-colors"
+                    placeholder="0.00">
+            </div>
+            <button (click)="openTrade()" [disabled]="loading"
+                class="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-slate-900 font-bold py-3 rounded-lg transition-all transform active:scale-95">
+                {{ loading ? 'Processing...' : 'Lock Funds & Open' }}
+            </button>
+        </div>
+
+        <!-- Close Trade Section -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-200">Close Active Trade</h3>
+            <div class="space-y-2">
+                <label class="text-sm text-gray-400">Trade UUID</label>
+                <input type="text" [(ngModel)]="tradeUuid"
+                    class="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white font-mono text-sm focus:outline-none focus:border-blue-500/50 transition-colors"
+                    placeholder="Enter UUID">
+            </div>
+            <div class="space-y-2">
+                <label class="text-sm text-gray-400">Profit / Loss ($)</label>
+                <input type="number" [(ngModel)]="pnl"
+                    class="w-full bg-slate-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500/50 transition-colors"
+                    placeholder="0.00">
+            </div>
+            <button (click)="closeTrade()" [disabled]="loading || !tradeUuid"
+                class="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white font-bold py-3 rounded-lg transition-all transform active:scale-95">
+                {{ loading ? 'Processing...' : 'Settle & Unlock' }}
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="message"
+        [class]="messageType === 'success' ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-500' : 'bg-red-500/20 border-red-500/50 text-red-500'"
+        class="mt-6 p-4 border rounded-lg animate-fade-in">
+        {{ message }}
+    </div>
+
+    <!-- Running Trades List -->
+    <div class="mt-8 border-t border-white/10 pt-8 animate-fade-in">
+        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            Running Trades
+        </h3>
+
+        <div *ngIf="activeTrades.length === 0" class="glass-panel p-8 text-center text-slate-400">
+            No active trades running.
+        </div>
+
+        <div class="space-y-4">
+            <div *ngFor="let trade of activeTrades"
+                class="glass-panel p-4 flex flex-col md:flex-row justify-between items-center gap-4 hover:bg-white/5 transition-all">
+                <div class="flex-1">
+                    <p class="text-xs font-mono text-slate-500">{{ trade.id }}</p>
+                    <div class="flex items-center gap-4 mt-1">
+                        <span class="text-emerald-400 font-bold">${{ trade.margin | number:'1.2-2' }} Margin</span>
+                        <span class="text-slate-500 text-xs">{{ trade.created_at | date:'short' }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="number" #pnlInput
+                        class="w-24 bg-slate-800 border border-white/10 rounded-lg px-3 py-1 text-white text-sm"
+                        placeholder="PnL">
+                    <button (click)="closeTrade(trade.id, +pnlInput.value)"
+                        class="bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-4 py-1 rounded-lg transition-all text-sm font-bold">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

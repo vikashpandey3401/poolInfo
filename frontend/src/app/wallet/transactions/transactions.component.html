@@ -1,0 +1,54 @@
+<div class="glass-card p-6 animate-fade-in mt-6">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-white">Transaction History</h2>
+        <div class="p-2 bg-purple-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="flex justify-center py-10">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500"></div>
+    </div>
+
+    <div *ngIf="!loading && !error" class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-gray-400 border-b border-white/10">
+                    <th class="py-3 px-4 font-medium uppercase text-xs">Date</th>
+                    <th class="py-3 px-4 font-medium uppercase text-xs">Type</th>
+                    <th class="py-3 px-4 font-medium uppercase text-xs text-right">Amount</th>
+                    <th class="py-3 px-4 font-medium uppercase text-xs text-right">Available After</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let tx of transactions" class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td class="py-4 px-4 text-sm text-gray-300">{{ tx.created_at | date:'MMM d, HH:mm' }}</td>
+                    <td class="py-4 px-4">
+                        <span [class]="getTransactionClass(tx.type)"
+                            class="text-xs uppercase tracking-wider px-2 py-1 rounded bg-white/5">
+                            {{ tx.type }}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4 text-sm text-right font-mono" [class.text-red-400]="tx.amount < 0"
+                        [class.text-green-400]="tx.amount > 0">
+                        {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount | number:'1.2-8' }}
+                    </td>
+                    <td class="py-4 px-4 text-sm text-right font-mono text-gray-300">
+                        {{ tx.available_after | number:'1.2-8' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="transactions.length === 0" class="text-center py-10 text-gray-500">
+            No transactions found.
+        </div>
+    </div>
+
+    <div *ngIf="error" class="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-500">
+        {{ error }}
+    </div>
+</div>

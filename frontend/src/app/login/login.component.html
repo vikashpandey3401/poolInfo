@@ -1,0 +1,63 @@
+<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl mix-blend-screen mix-blend-color-dodge animate-pulse"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl mix-blend-screen animate-pulse delay-1000"></div>
+
+  <div class="relative w-full max-w-md glass-panel">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">Welcome Back</h2>
+      <p class="text-slate-400">Sign in to your copy-trading account</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-6">
+      <div *ngIf="error" class="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <span>{{error}}</span>
+      </div>
+
+      <div class="space-y-2">
+        <label for="email" class="text-sm font-medium text-slate-300">Email Address</label>
+        <input 
+          id="email" 
+          type="email" 
+          name="email" 
+          [(ngModel)]="email" 
+          required 
+          class="input-field" 
+          placeholder="you@example.com"
+        >
+      </div>
+
+      <div class="space-y-2">
+        <label for="password" class="text-sm font-medium text-slate-300">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          name="password" 
+          [(ngModel)]="password" 
+          required 
+          class="input-field" 
+          placeholder="••••••••"
+        >
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="!loginForm.form.valid || isLoading"
+        class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-cyan-500/50 transition-all hover:-translate-y-1"
+      >
+        <span *ngIf="!isLoading">Sign In</span>
+        <svg *ngIf="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </button>
+
+      <div class="text-center text-sm text-slate-400 mt-6">
+        Don't have an account? 
+        <a routerLink="/register" class="text-cyan-400 hover:text-cyan-300 font-medium hover:underline transition-colors">Create one</a>
+      </div>
+    </form>
+  </div>
+</div>
